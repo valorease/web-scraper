@@ -3,10 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "node --env-file=.env ./build/index.js",
-    "ts": "tsc --watch",
-    "dev-ts": "tsx watch ./src/",
-    "build": "tsc && node --env-file=.env ./build/index.js"
+    "dev": "node --env-file=.env ./src/index.js"
   },
   "keywords": [],
   "author": "",
