@@ -1,8 +1,8 @@
 <?php
 
-namespace WebScraper\Adapter;
+namespace App\Adapter;
 
-use WebScraper\Adapter;
+use App\Adapter;
 
 use Dom\HTMLDocument;
 

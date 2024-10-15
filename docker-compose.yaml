@@ -4,6 +4,8 @@ services:
       context: .
       dockerfile: dockerfile.php
     container_name: web-scraper-php
+    stdin_open: true
+    tty: true
     volumes:
       - .:/web-scraper
 

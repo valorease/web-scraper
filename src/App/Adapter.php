@@ -1,8 +1,8 @@
 <?php
 
-namespace WebScraper;
+namespace App;
 
-use WebScraper\Adapter\MLAdapter;
+use App\Adapter\MLAdapter;
 
 abstract class Adapter
 {
@@ -12,6 +12,14 @@ abstract class Adapter
     {
         return match ($target) {
             'ML' => new MLAdapter(),
+            true => throw new \Exception()
+        };
+    }
+
+    public static function getUrl(string $target, string $slug): string
+    {
+        return match ($target) {
+            'ML' => "https://lista.mercadolivre.com.br/$slug",
             true => throw new \Exception()
         };
     }

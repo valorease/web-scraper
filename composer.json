@@ -1,7 +1,8 @@
 {
   "autoload": {
     "psr-4": {
-      "WebScraper\\": "src/WebScraper"
+      "App\\": "src/App",
+      "Util\\": "src/Util"
     }
   },
   "require": {
