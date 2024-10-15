@@ -1,0 +1,10 @@
+{
+  "autoload": {
+    "psr-4": {
+      "WebScraper\\": "src/WebScraper"
+    }
+  },
+  "require": {
+    "jerome/fetch-php": "^2.0"
+  }
+}

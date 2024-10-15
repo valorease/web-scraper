@@ -1,0 +1,7 @@
+FROM composer
+
+COPY . ./web-scraper
+
+WORKDIR /web-scraper
+
+CMD composer install

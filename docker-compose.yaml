@@ -1,0 +1,16 @@
+services:
+  web-scraper-php:
+    build:
+      context: .
+      dockerfile: dockerfile.php
+    container_name: web-scraper-php
+    volumes:
+      - .:/web-scraper
+
+  web-scraper-composer:
+    build:
+      context: .
+      dockerfile: dockerfile.composer
+    container_name: web-scraper-composer
+    volumes:
+      - .:/web-scraper
