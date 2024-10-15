@@ -11,7 +11,6 @@ class Main
     public static function app(): void
     {
         $content = fetch('https://lista.mercadolivre.com.br/iphone-15#D[A:iphone%2015]')->text();
-        Selector::price($content);
 
         return;
         $token = '';
