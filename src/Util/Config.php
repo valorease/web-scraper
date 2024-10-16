@@ -10,7 +10,7 @@ class Config
 
     private static ?array $config = null;
 
-    public static function get(?string $key = null): mixed
+    public static function get(): array
     {
         if (empty(self::$config)) {
             self::$config = include file_exists(self::LOCAL_CONFIG_FILE)
@@ -18,6 +18,6 @@ class Config
                 : self::GLOBAL_CONFIG_FILE;
         }
 
-        return empty($key) ? self::$config : self::$config[$key] ?? null;
+        return self::$config;
     }
 }

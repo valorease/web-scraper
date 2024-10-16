@@ -3,35 +3,41 @@
 namespace App;
 
 use App\Product;
+use Util\Log;
 
 class Main
 {
-
-    public static function app(): void
+    public static function app(): never
     {
-        // $options = [
-        //     'headers' => [
-        //         'Authorization' => "Bearer $token"
-        //     ],
-        // ];
+        while (true) {
+            try {
+                $options = [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . config('API', 'TOKEN')
+                    ],
+                ];
 
-        // $product = fetch(self::URL_API, $options)->json();
+                $fetch = fetch(config('API', 'URL'), $options);
 
-        $product = [
-            'id' => 1,
-            'targets' => ['ML'],
-            'slug' => 'iphone-15'
-        ];
+                if (!($fetch instanceof \Fetch\Http\Response)) {
+                    throw new \Exception('Falha na requisição');
+                }
 
-        if (!is_array($product)) {
-            return;
+                $product = $fetch->json();
+                $product = new Product(...$product);
+
+                $result = $product->parse($product->search());
+
+                $options['method'] = 'POST';
+                $options['body'] = $result;
+
+                fetch(config('API', 'URL'), $options);
+            } catch (\Exception $exception) {
+                echo $exception->getMessage();
+                Log::saveLocal('exception_error', $exception->getMessage());
+            }
+
+            sleep(10);
         }
-
-        $product = new Product(...$product);
-
-        $contents = $product->search();
-        $result = $product->parse($contents);
-
-        var_dump($result);
     }
 }
