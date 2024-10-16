@@ -11,6 +11,7 @@ class Main
     {
         while (true) {
             try {
+
                 $options = [
                     'headers' => [
                         'Authorization' => 'Bearer ' . config('API', 'TOKEN')
@@ -24,6 +25,7 @@ class Main
                 }
 
                 $product = $fetch->json();
+
                 $product = new Product(...$product);
 
                 $result = $product->parse($product->search());
@@ -32,9 +34,12 @@ class Main
                 $options['body'] = $result;
 
                 fetch(config('API', 'URL'), $options);
+
             } catch (\Exception $exception) {
+
                 echo $exception->getMessage();
                 Log::saveLocal('exception_error', $exception->getMessage());
+
             }
 
             sleep(10);
