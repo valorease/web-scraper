@@ -11,35 +11,39 @@ class Main
     {
         while (true) {
             try {
-
                 $options = [
-                    'headers' => [
-                        'Authorization' => 'Bearer ' . config('API', 'TOKEN')
+                    "headers" => [
+                        "Authorization" => "Bearer " . config("API", "TOKEN"),
                     ],
                 ];
 
-                $fetch = fetch(config('API', 'URL'), $options);
+                $fetch = fetch(
+                    config("API", "URL") . "/product/queue",
+                    $options
+                );
 
                 if (!($fetch instanceof \Fetch\Http\Response)) {
-                    throw new \Exception('Falha na requisição');
+                    throw new \Exception("Falha na requisição");
                 }
 
                 $product = $fetch->json();
 
                 $product = new Product(...$product);
 
-                $result = $product->parse($product->search());
+                $results = $product->parse($product->search());
 
-                $options['method'] = 'POST';
-                $options['body'] = $result;
+                $result = [
+                    "id" => $product->id,
+                    "results" => $results,
+                ];
 
-                fetch(config('API', 'URL'), $options);
+                $options["method"] = "POST";
+                $options["body"] = $result;
 
+                fetch(config("API", "URL") . "/product/result", $options);
             } catch (\Exception $exception) {
-
                 echo $exception->getMessage();
-                Log::saveLocal('exception_error', $exception->getMessage());
-
+                Log::saveLocal("exception_error", $exception->getMessage());
             }
 
             sleep(10);
