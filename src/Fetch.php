@@ -2,6 +2,8 @@
 
 namespace Core\Helper;
 
+ini_set('display_errors', 1);
+
 use Exception;
 
 class Fetch
@@ -16,13 +18,18 @@ class Fetch
      *   method: string|null,
      *   body: string|array|null,
      *   query: array|null,
-     *   headers: array<string, string>|null,
+     *   header: array<string, string>|null,
      * } $options
      *
      * @return Response
      */
-    public static function new(string $url, array $options = []): Response
-    {
+    public static function to(
+        string $url,
+        $method = null,
+        $body = null,
+        $query = null,
+        $header = null
+    ): Response {
         if (
             empty($options['method'])
             || !array_key_exists($options['method'], self::METHODS)
@@ -34,55 +41,61 @@ class Fetch
             $options['body'] = null;
         }
 
-        if (empty($options['headers'])) {
-            $options['headers'] = [];
+        if (empty($options['header'])) {
+            $options['header'] = [];
         }
 
         if (is_array($options['body'])) {
             $options['body'] = json_encode($options['body']);
-            $options['headers']['Content-Type'] = 'application/json';
+            $options['header']['Content-Type'] = 'application/json';
         }
 
-        $options['headers'] = self::formatHeaders($options['headers']);
+        $options['header'] = self::formatHeader($options['header']);
+
+        if (!empty($options['query'])) {
+            $options['query'] = http_build_query($options['query']);
+            $url .= "?{$options['query']}";
+        }
 
         $curl = curl_init();
 
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $options['method']);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $options['body']);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $options['headers']);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $url,
+            CURLOPT_CUSTOMREQUEST => $options['method'],
+            CURLOPT_POSTFIELDS => $options['body'],
+            CURLOPT_HTTPHEADER => $options['header'],
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER => true,
+        ]);
 
-        $body = curl_exec($curl);
+        $response = curl_exec($curl);
 
         if (curl_errno($curl)) {
-            // todo
         }
 
-        $headers = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-        $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+
+        $header = substr($response, 0, $headerSize);
+        $body = substr($response, $headerSize);
+
+        $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
         curl_close($curl);
 
-        return new Response($body, $code);
-    }
-
-    private static function fetchException(): Exception
-    {
-        return new Exception();
+        return new Response($statusCode, $body, $header);
     }
 
     /**
-     * @param array<string, string> $headers
+     * @param array<string, string> $header
      * 
      * @return string[]
      */
-    private static function formatHeaders(array $headers): array
+    private static function formatHeader(array $header): array
     {
         $result = [];
 
-        foreach ($headers as $key => $value) {
-            $result = "$key: $value";
+        foreach ($header as $key => $value) {
+            $result[] = "$key: $value";
         }
 
         return $result;
@@ -95,10 +108,16 @@ class Response
 
     private string $body;
 
-    public function __construct(string $body, int $statusCode)
-    {
-        $this->body = $body;
+    private string $header;
+
+    public function __construct(
+        int $statusCode,
+        string $body,
+        string $header
+    ) {
         $this->statusCode = $statusCode;
+        $this->body = $body;
+        $this->header = $header;
     }
 
     public function json(): array
@@ -110,6 +129,43 @@ class Response
     {
         return $this->body;
     }
+
+    public function header(): array
+    {
+        $header = [];
+
+        $exploded = explode(PHP_EOL, $this->header);
+
+        foreach ($exploded as $line) {
+            $line = explode(': ', $line);
+
+            if (count($line) < 2) {
+                continue;
+            }
+
+            $header[trim($line[0])] = trim($line[1]);
+        }
+
+        return $header;
+    }
 }
 
-Fetch::new('www.google.com')->statusCode;
+$response = Fetch::to(
+    'www.google.com',
+    method: 'POST',
+    query: [
+        'page' => 80
+    ],
+    body: [
+        'event' => [
+            'token' => '...',
+            'siteKey' => '...',
+            'userAgent' => '...'
+        ]
+    ]
+);
+
+var_dump($response->header());
+
+
+
