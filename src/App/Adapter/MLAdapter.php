@@ -13,7 +13,7 @@ class MLAdapter extends Adapter
         $document = HTMLDocument::createFromString($content);
 
         $content = $document->querySelectorAll(
-            'span.andes-money-amount__fraction'
+            'span.andes-money-amount__fraction:not(.poly-phrase-price)'
         );
 
         $content = $content->getIterator();
@@ -21,7 +21,18 @@ class MLAdapter extends Adapter
         $prices = [];
 
         foreach ($content as $node) {
-            $prices[] = $node->textContent;
+            $price = $node->textContent;
+            $price = str_replace('.', '', $price);
+
+            $cents = $node->parentElement->querySelector(
+                'span.andes-money-amount__cents'
+            );
+
+            $price .= empty($cents->textContent) ? '.00' : ".{$cents->textContent}";
+
+            $price = (float) $price;
+
+            $prices[] = $price;
         }
 
         return $prices;

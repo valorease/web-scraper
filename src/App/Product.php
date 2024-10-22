@@ -10,13 +10,10 @@ class Product
     public function __construct(
         public readonly int $id,
         public readonly string $slug,
-        public readonly array $targets
-    ) {
-    }
+        public readonly array $targets,
+        public readonly float $average
+    ) {}
 
-    /**
-     * @return array<missing>
-     */
     public function search(): array
     {
         $result = [];
@@ -41,20 +38,15 @@ class Product
         $result = [];
 
         foreach ($searchResult as $target => $data) {
+            $prices = Adapter::getAdapter($target)->prices($data["content"]);
+
             $result[] = [
                 "target" => $target,
                 "url" => $data["url"],
-                "prices" => Adapter::getAdapter($target)->prices(
-                    $data["content"]
-                ),
+                "prices" => Adapter::filterPrices($this->average, $prices),
             ];
         }
 
         return $result;
     }
 }
-/**
-Fluxo
-
-
- */
