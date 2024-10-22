@@ -6,6 +6,7 @@ services:
     container_name: web-scraper-php
     stdin_open: true
     tty: true
+    network_mode: host
     volumes:
       - .:/web-scraper
 
