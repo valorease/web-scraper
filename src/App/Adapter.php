@@ -8,8 +8,12 @@ abstract class Adapter
 {
     abstract public function prices(string $content): array;
 
-    public static function filterPrices(float $average, array $prices): array
+    public static function filterPrices(?float $average, array $prices): array
     {
+        if ($average === null) {
+            return $prices;
+        }
+
         $prices = array_filter(
             $prices,
             function (float $price) use ($average): bool {
@@ -39,6 +43,7 @@ abstract class Adapter
     {
         return match ($target) {
             "ML" => new MLAdapter(),
+            "AZ" => new MLAdapter(),
             true => throw new \Exception(),
         };
     }
@@ -47,6 +52,7 @@ abstract class Adapter
     {
         return match ($target) {
             "ML" => "https://lista.mercadolivre.com.br/$slug",
+            "AZ" => "https://lista.mercadolivre.com.br/$slug",
             true => throw new \Exception(),
         };
     }

@@ -3,6 +3,6 @@
 return [
     'API' => [
         'TOKEN' => '',
-        'URL' => '',
+        'URL' => 'http://localhost:3000/api',
     ]
 ];

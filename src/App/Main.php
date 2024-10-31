@@ -17,37 +17,32 @@ class Main
                     ],
                 ];
 
-                // $fetch = fetch(
-                //     config("API", "URL") . "/product/queue",
-                //     $options
-                // );
+                $fetch = fetch(
+                    config("API", "URL") . "/product/queue",
+                    $options
+                );
 
-                // if (!($fetch instanceof \Fetch\Http\Response)) {
-                //     throw new \Exception("Falha na requisição");
-                // }
+                if (!($fetch instanceof \Fetch\Http\Response)) {
+                    throw new \Exception("Falha na requisição");
+                }
 
-                // $product = $fetch->json();
-
-                $product = [
-                    'id' => 1,
-                    'slug' => 'iphone-15',
-                    'targets' => ['ML'],
-                    'average' => 4000.00
-                ];
+                $product = $fetch->json();
 
                 $product = new Product(...$product);
 
-                $results = $product->parse($product->search());
+                $result = $product->parse($product->search());
+
+                $result['prices'] = array_values($result['prices']);
 
                 $result = [
-                    "id" => $product->id,
-                    "results" => $results,
+                    "publicId" => $product->publicId,
+                    ...$result,
                 ];
 
-                $options["method"] = "POST";
+                $options["method"] = "PUT";
                 $options["body"] = $result;
 
-                // fetch(config("API", "URL") . "/product/result", $options);
+                fetch(config("API", "URL") . "/product/queue", $options);
 
                 Log::saveLocal('result', json_encode($options["body"]));
             } catch (\Exception $exception) {
@@ -55,7 +50,7 @@ class Main
                 Log::saveLocal("exception_error", $exception->getMessage());
             }
 
-            sleep(10);
+            sleep(5);
         }
     }
 }
