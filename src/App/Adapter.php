@@ -16,13 +16,13 @@ abstract class Adapter
 
         $prices = array_filter(
             $prices,
-            function (float $price) use ($average): bool {
-                return (($price * 100) / $average) >= 20.0;
+            function ($price) use ($average): bool {
+                return (($price["price"] * 100) / $average) >= 20.0;
             }
         );
 
         $currentAverage = array_reduce(
-            $prices,
+            array_column($prices, "price"),
             function (float $carry, float $current): float {
                 return $carry + $current;
             },
@@ -31,8 +31,8 @@ abstract class Adapter
 
         $prices = array_filter(
             $prices,
-            function (float $price) use ($currentAverage): bool {
-                return (($price * 100) / $currentAverage) >= 20.0;
+            function ($price) use ($currentAverage): bool {
+                return (($price["price"] * 100) / $currentAverage) >= 20.0;
             }
         );
 

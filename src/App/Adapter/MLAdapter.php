@@ -5,6 +5,7 @@ namespace App\Adapter;
 use App\Adapter;
 
 use Dom\HTMLDocument;
+use Exception;
 
 class MLAdapter extends Adapter
 {
@@ -30,9 +31,22 @@ class MLAdapter extends Adapter
 
             $price .= empty($cents->textContent) ? '.00' : ".{$cents->textContent}";
 
+            try {
+                $url = $node
+                    ->closest('.ui-search-result__wrapper')
+                    ->querySelector('a')
+                    ->attributes['href']
+                    ->textContent;
+            } catch (Exception $ex) {
+                $url = null;
+            }
+
             $price = (float) $price;
 
-            $prices[] = $price;
+            $prices[] = [
+                "price" => $price,
+                "url" => $url
+            ];
         }
 
         return $prices;

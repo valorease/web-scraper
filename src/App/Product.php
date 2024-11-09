@@ -36,7 +36,6 @@ class Product
 
         return [
             "target" => $this->target,
-            "url" => $searchResult["url"],
             "prices" => Adapter::filterPrices($this->average, $prices),
         ];
     }
