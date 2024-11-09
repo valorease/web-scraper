@@ -14,7 +14,7 @@ class MLAdapter extends Adapter
         $document = HTMLDocument::createFromString($content);
 
         $content = $document->querySelectorAll(
-            'span.andes-money-amount__fraction:not(.poly-phrase-price)'
+            'span.andes-money-amount__fraction[aria-hidden="true"]:not(.poly-phrase-price)'
         );
 
         $content = $content->getIterator();
@@ -24,7 +24,12 @@ class MLAdapter extends Adapter
         foreach ($content as $node) {
             $closest = $node->closest('.ui-search-result__wrapper');
 
-            if (empty($closest)) {
+            if (
+                empty($closest)
+                || empty($node->closest('span.andes-money-amount.andes-money-amount--cents-superscript'))
+                || empty($node->closest('div.poly-price__current'))
+                || empty($node->closest('div.poly-content'))
+            ) {
                 continue;
             }
 
