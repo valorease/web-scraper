@@ -22,6 +22,12 @@ class MLAdapter extends Adapter
         $prices = [];
 
         foreach ($content as $node) {
+            $closest = $node->closest('.ui-search-result__wrapper');
+
+            if (empty($closest)) {
+                continue;
+            }
+
             $price = $node->textContent;
             $price = str_replace('.', '', $price);
 
@@ -32,8 +38,7 @@ class MLAdapter extends Adapter
             $price .= empty($cents->textContent) ? '.00' : ".{$cents->textContent}";
 
             try {
-                $url = $node
-                    ->closest('.ui-search-result__wrapper')
+                $url = $closest
                     ->querySelector('a')
                     ->attributes['href']
                     ->textContent;
