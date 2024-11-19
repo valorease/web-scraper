@@ -31,8 +31,9 @@ class Main
                 $product = new Product(...$product);
 
                 if (
-                    date_create_from_format('Y-m-d H:i:s', $product->lastSearch)
-                        ->diff(date_create())->h < 5
+                    !empty($product->lastSearch)
+                    && (new \DateTime($product->lastSearch))
+                        ->diff(date_create())->h < 1
                 ) {
                     continue;
                 }
