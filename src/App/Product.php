@@ -11,7 +11,8 @@ class Product
         public readonly string $publicId,
         public readonly string $slug,
         public readonly string $target,
-        public readonly ?float $average = null
+        public readonly ?float $average = null,
+        public readonly ?string $lastSearch = null
     ) {
     }
 

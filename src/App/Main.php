@@ -30,6 +30,13 @@ class Main
 
                 $product = new Product(...$product);
 
+                if (
+                    date_create_from_format('Y-m-d H:i:s', $product->lastSearch)
+                        ->diff(date_create())->h < 5
+                ) {
+                    continue;
+                }
+
                 $result = $product->parse($product->search());
 
                 $result['prices'] = array_values($result['prices']);
