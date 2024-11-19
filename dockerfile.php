@@ -4,4 +4,4 @@ COPY . /web-scraper
 
 WORKDIR /web-scraper
 
-CMD "php public/cli.php"
+CMD php public/cli.php
