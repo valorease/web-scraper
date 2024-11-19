@@ -30,23 +30,35 @@ class Main
 
                 $product = new Product(...$product);
 
-                $results = $product->parse($product->search());
+                if (
+                    !empty($product->lastSearch)
+                    && (new \DateTime($product->lastSearch))
+                        ->diff(date_create())->h < 1
+                ) {
+                    continue;
+                }
+
+                $result = $product->parse($product->search());
+
+                $result['prices'] = array_values($result['prices']);
 
                 $result = [
-                    "id" => $product->id,
-                    "results" => $results,
+                    "publicId" => $product->publicId,
+                    ...$result,
                 ];
 
-                $options["method"] = "POST";
+                $options["method"] = "PUT";
                 $options["body"] = $result;
 
-                fetch(config("API", "URL") . "/product/result", $options);
+                fetch(config("API", "URL") . "/product/queue", $options);
+
+                Log::saveLocal('result', json_encode($options["body"]));
             } catch (\Exception $exception) {
                 echo $exception->getMessage();
                 Log::saveLocal("exception_error", $exception->getMessage());
             }
 
-            sleep(10);
+            sleep(5);
         }
     }
 }

@@ -8,53 +8,36 @@ class Product
      * @param string[] $targets
      */
     public function __construct(
-        public readonly int $id,
+        public readonly string $publicId,
         public readonly string $slug,
-        public readonly array $targets
+        public readonly string $target,
+        public readonly ?float $average = null,
+        public readonly ?string $lastSearch = null
     ) {
     }
 
-    /**
-     * @return array<missing>
-     */
     public function search(): array
     {
-        $result = [];
+        $url = Adapter::getUrl($this->target, $this->slug);
 
-        foreach ($this->targets as $target) {
-            $url = Adapter::getUrl($target, $this->slug);
-
-            $result[$target] = [
-                "url" => $url,
-                "content" => fetch($url)->text(),
-            ];
-        }
-
-        return $result;
+        return [
+            "url" => $url,
+            "content" => fetch($url)->text(),
+        ];
     }
+
     /**
-     * @param array<int,mixed> $searchResult
-     * @return array<int,array<string,mixed>>
+     * @return array<int, array<string, mixed>>
      */
     public function parse(array $searchResult): array
     {
-        $result = [];
+        $prices = Adapter::getAdapter($this->target)->prices(
+            $searchResult["content"]
+        );
 
-        foreach ($searchResult as $target => $data) {
-            $result[] = [
-                "target" => $target,
-                "url" => $data["url"],
-                "prices" => Adapter::getAdapter($target)->prices(
-                    $data["content"]
-                ),
-            ];
-        }
-
-        return $result;
+        return [
+            "target" => $this->target,
+            "prices" => Adapter::filterPrices($this->average, $prices),
+        ];
     }
 }
-/**
-Fluxo
-
-
- */

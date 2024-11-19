@@ -4,4 +4,4 @@ COPY . /web-scraper
 
 WORKDIR /web-scraper
 
-CMD tail -f /dev/null 
+CMD php public/cli.php
