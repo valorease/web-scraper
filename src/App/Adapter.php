@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Adapter\AMAdapter;
 use App\Adapter\MLAdapter;
 
 abstract class Adapter
@@ -43,7 +44,7 @@ abstract class Adapter
     {
         return match ($target) {
             "ML" => new MLAdapter(),
-            "AZ" => new MLAdapter(),
+            "AM" => new AMAdapter(),
             true => throw new \Exception(),
         };
     }
@@ -52,7 +53,7 @@ abstract class Adapter
     {
         return match ($target) {
             "ML" => "https://lista.mercadolivre.com.br/$slug",
-            "AZ" => "https://lista.mercadolivre.com.br/$slug",
+            "AM" => "https://www.americanas.com.br/busca/$slug",
             true => throw new \Exception(),
         };
     }
