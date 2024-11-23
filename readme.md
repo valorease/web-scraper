@@ -1,6 +1,6 @@
 # Valorease: Web Scraper
 
-O presente projeto foi desenvolvido para o curso de Análise e Desenvolvimento de Sistemas da Unimar (matéria Fábrica de Projetos II). Ele se propõe na implementação de um web scraper capaz de obter o preço atual de um/vários produto(s) em lojas virtuais (Mercado Livre e Americanas).
+O presente projeto foi desenvolvido para o curso de Análise e Desenvolvimento de Sistemas da Unimar (matéria Fábrica de Projetos II). Ele se propõe na implementação de um web scraper capaz de obter o preço atual de um/vários produto(s) em lojas virtuais (Mercado Livre).
 
 Para a criação, foi escolhido a linguagem PHP na versão 8.4.
 
@@ -66,7 +66,13 @@ Como API, o projeto possui uma rota:
 [Content-Type] application/json
 [Body] {
   "target": "ML",
-  "prices": []
+  "prices": [
+    {
+      "price": 3500,
+      "url": "..."
+    },
+    [...]
+  ]
 }
 ```
 
