@@ -9,6 +9,8 @@ services:
     network_mode: host
     volumes:
       - .:/web-scraper
+    expose:
+      - 5050:5050
 
   web-scraper-composer:
     build:
